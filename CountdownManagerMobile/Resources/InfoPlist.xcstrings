@@ -1,0 +1,22 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSLocationWhenInUseUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app uses your approximate location and sends it to Open-Meteo to show your local forecast."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для прогноза по текущему местоположению приложение использует приблизительные координаты и передаёт их Open-Meteo."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

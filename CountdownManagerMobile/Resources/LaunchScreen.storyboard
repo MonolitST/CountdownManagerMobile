@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="26000" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="lch-vc-001">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="26000"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="lch-sc-001">
+            <objects>
+                <viewController id="lch-vc-001" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="lch-vw-001">
+                        <rect key="frame" x="0" y="0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view userInteractionEnabled="NO" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="lch-an-001">
+                                <rect key="frame" x="106.5" y="273" width="180" height="180"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" image="OnboardingSplashOrbit" translatesAutoresizingMaskIntoConstraints="NO" id="lch-or-001">
+                                        <rect key="frame" x="0" y="0" width="180" height="180"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" image="OnboardingSplashHalo" translatesAutoresizingMaskIntoConstraints="NO" id="lch-ha-001">
+                                        <rect key="frame" x="10" y="10" width="160" height="160"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" image="OnboardingSplashMark" translatesAutoresizingMaskIntoConstraints="NO" id="lch-ma-001">
+                                        <rect key="frame" x="50" y="50" width="80" height="80"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" image="OnboardingSplashGlyph" translatesAutoresizingMaskIntoConstraints="NO" id="lch-gl-001">
+                                        <rect key="frame" x="63.68" y="63.68" width="52.64" height="52.64"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="lch-or-001" firstAttribute="centerX" secondItem="lch-an-001" secondAttribute="centerX" id="lch-or-0cx"/>
+                                    <constraint firstItem="lch-or-001" firstAttribute="centerY" secondItem="lch-an-001" secondAttribute="centerY" id="lch-or-0cy"/>
+                                    <constraint firstItem="lch-ha-001" firstAttribute="centerX" secondItem="lch-an-001" secondAttribute="centerX" id="lch-ha-0cx"/>
+                                    <constraint firstItem="lch-ha-001" firstAttribute="centerY" secondItem="lch-an-001" secondAttribute="centerY" id="lch-ha-0cy"/>
+                                    <constraint firstItem="lch-ma-001" firstAttribute="centerX" secondItem="lch-an-001" secondAttribute="centerX" id="lch-ma-0cx"/>
+                                    <constraint firstItem="lch-ma-001" firstAttribute="centerY" secondItem="lch-an-001" secondAttribute="centerY" id="lch-ma-0cy"/>
+                                    <constraint firstItem="lch-gl-001" firstAttribute="centerX" secondItem="lch-an-001" secondAttribute="centerX" id="lch-gl-0cx"/>
+                                    <constraint firstItem="lch-gl-001" firstAttribute="centerY" secondItem="lch-an-001" secondAttribute="centerY" id="lch-gl-0cy"/>
+                                </constraints>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lch-rf-001">
+                                <rect key="frame" x="196.5" y="59" width="0" height="652.74"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" id="lch-rf-00w"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="lch-sa-001"/>
+                        <color key="backgroundColor" name="Background"/>
+                        <constraints>
+                            <constraint firstItem="lch-rf-001" firstAttribute="top" secondItem="lch-sa-001" secondAttribute="top" id="lch-rf-00t"/>
+                            <constraint firstItem="lch-rf-001" firstAttribute="centerX" secondItem="lch-sa-001" secondAttribute="centerX" id="lch-rf-0cx"/>
+                            <constraint firstItem="lch-rf-001" firstAttribute="height" secondItem="lch-sa-001" secondAttribute="height" multiplier="0.86" id="lch-rf-00h"/>
+                            <constraint firstItem="lch-an-001" firstAttribute="width" constant="180" id="lch-an-00w"/>
+                            <constraint firstItem="lch-an-001" firstAttribute="height" constant="180" id="lch-an-00h"/>
+                            <constraint firstItem="lch-an-001" firstAttribute="centerX" secondItem="lch-sa-001" secondAttribute="centerX" id="lch-an-0cx"/>
+                            <constraint firstItem="lch-an-001" firstAttribute="centerY" secondItem="lch-rf-001" secondAttribute="centerY" constant="-22" id="lch-an-0cy"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lch-fr-001" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="OnboardingSplashGlyph" width="52.64" height="52.64"/>
+        <image name="OnboardingSplashHalo" width="160" height="160"/>
+        <image name="OnboardingSplashMark" width="80" height="80"/>
+        <image name="OnboardingSplashOrbit" width="180" height="180"/>
+        <namedColor name="Background">
+            <color red="0.9803921569" green="0.9607843137" blue="0.9294117647" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

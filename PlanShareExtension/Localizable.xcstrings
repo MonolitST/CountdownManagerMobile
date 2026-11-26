@@ -1,0 +1,96 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Attachments": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вложения"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        }
+      }
+    },
+    "Couldn’t add the attachment. Check the plan and try again.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось добавить вложение. Проверьте план и попробуйте ещё раз."
+          }
+        }
+      }
+    },
+    "Create a plan in Countdown Manager, then share the attachment again.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создайте план в Countdown Manager, затем отправьте вложение ещё раз."
+          }
+        }
+      }
+    },
+    "No plans yet": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пока нет планов"
+          }
+        }
+      }
+    },
+    "Open Countdown Manager first to make your plans available.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сначала откройте Countdown Manager, чтобы загрузить ваши планы."
+          }
+        }
+      }
+    },
+    "Plans": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Планы"
+          }
+        }
+      }
+    },
+    "Save to plan": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить в план"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
