@@ -15,25 +15,7 @@ struct PlannerRoot: View {
     var body: some View {
         let locationContext = locationRefresh
         let forecastContext = weatherRefresh
-        TabView(selection: $selection) {
-            Tab(PlannerTab.plans.title, image: "TabCalendar", value: .plans) {
-                PlansNavigation(today: today, path: $planPath, showsNewPlan: $showsNewPlan,
-                                onOpenTimer: { focusPlan = $0 })
-                    .toolbarVisibility(.hidden, for: .tabBar)
-            }
-            Tab(PlannerTab.reminders.title, image: "TabBell", value: .reminders) {
-                RemindersNavigation(today: today, onOpenPlan: { openPlan($0, showsTimer: false) })
-                    .toolbarVisibility(.hidden, for: .tabBar)
-            }
-            Tab(PlannerTab.settings.title, image: "TabSettings", value: .settings) {
-                SettingsView()
-                    .toolbarVisibility(.hidden, for: .tabBar)
-            }
-        }
-        .tabViewStyle(.tabBarOnly)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            PlannerTabBar(selection: $selection)
-        }
+        navigation
         .background(Palette.background.ignoresSafeArea())
         .foregroundStyle(Palette.text)
         .tint(Palette.accentText)
@@ -49,9 +31,6 @@ struct PlannerRoot: View {
             guard let id else { return }
             pendingFocusPlanID = nil
             openPlan(id, showsTimer: true)
-        }
-        .fullScreenCover(item: $focusPlan) { plan in
-            FocusTimerView(plan: plan)
         }
         .modifier(NotificationIntroduction())
         .task(id: scenePhase) {
@@ -87,6 +66,37 @@ struct PlannerRoot: View {
             Button(String(localized: "Close"), role: .cancel) { store.errorMessage = nil }
         } message: {
             Text(store.errorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var navigation: some View {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            TabletPlanner(selection: $selection, path: $planPath, showsNewPlan: $showsNewPlan,
+                          focusPlan: $focusPlan, today: today, onOpenPlan: { openPlan($0, showsTimer: false) })
+        } else {
+            TabView(selection: $selection) {
+                Tab(PlannerTab.plans.title, image: "TabCalendar", value: .plans) {
+                    PlansNavigation(today: today, path: $planPath, showsNewPlan: $showsNewPlan,
+                                    onOpenTimer: { focusPlan = $0 })
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+                Tab(PlannerTab.reminders.title, image: "TabBell", value: .reminders) {
+                    RemindersNavigation(today: today, onOpenPlan: { openPlan($0, showsTimer: false) })
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+                Tab(PlannerTab.settings.title, image: "TabSettings", value: .settings) {
+                    SettingsView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+            }
+            .tabViewStyle(.tabBarOnly)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                PlannerTabBar(selection: $selection)
+            }
+            .fullScreenCover(item: $focusPlan) { plan in
+                FocusTimerView(plan: plan)
+            }
         }
     }
 

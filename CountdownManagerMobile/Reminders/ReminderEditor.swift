@@ -7,16 +7,19 @@ struct ReminderEditor: View {
     @State private var showsDate = false
     @State private var confirmsDeletion = false
     private let original: Reminder?
+    private let tablet: Bool
 
-    init(reminder: Reminder? = nil) {
+    init(reminder: Reminder? = nil, tablet: Bool = false) {
         original = reminder
+        self.tablet = tablet
         _draft = State(initialValue: ReminderDraft(reminder: reminder))
     }
 
     var body: some View {
-        ScreenScroll(topPadding: 3) {
+        ScreenScroll(topPadding: tablet ? 20 : 3, contentWidth: tablet ? 380 : 530,
+                     horizontalPadding: tablet ? 20 : 23) {
             VStack(alignment: .leading, spacing: 16) {
-                EditorCloseButton()
+                if !tablet { EditorCloseButton() }
                 Text(original == nil ? String(localized: "New reminder") : String(localized: "Edit reminder"))
                     .displayFont(28)
                     .accessibilityAddTraits(.isHeader)
@@ -72,12 +75,7 @@ struct ReminderEditor: View {
                 }
             }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            FormFooter(title: original == nil ? String(localized: "Create reminder") : String(localized: "Save reminder"),
-                       disabled: draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            || draft.validationMessage(at: .now, original: original) != nil,
-                       action: save)
-        }
+        .safeAreaInset(edge: .bottom, spacing: 0) { footer }
         .foregroundStyle(Palette.text)
         .tint(Palette.accentText)
         .preferredColorScheme(store.data.settings.appearance.colorScheme)
@@ -90,6 +88,39 @@ struct ReminderEditor: View {
                                      actionTitle: String(localized: "Delete"), destructive: true) {
                 if let original, store.deleteReminder(original.id) { dismiss() }
             }
+        }
+    }
+
+    private var saveTitle: String {
+        original == nil ? String(localized: "Create reminder") : String(localized: "Save reminder")
+    }
+
+    private var invalid: Bool {
+        draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            || draft.validationMessage(at: .now, original: original) != nil
+    }
+
+    @ViewBuilder
+    private var footer: some View {
+        if tablet {
+            HStack(spacing: 14) {
+                Button("Cancel", role: .cancel) { dismiss() }
+                    .brandFont(14, weight: .semibold, relativeTo: .subheadline)
+                    .foregroundStyle(Palette.accentText)
+                    .frame(minHeight: 44)
+                Spacer(minLength: 0)
+                Button(saveTitle, action: save)
+                    .buttonStyle(BrandButtonStyle(compact: true))
+                    .frame(maxWidth: 218)
+                    .disabled(invalid)
+            }
+            .frame(maxWidth: 380)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 13)
+            .frame(maxWidth: .infinity)
+            .background(Palette.background)
+        } else {
+            FormFooter(title: saveTitle, disabled: invalid, action: save)
         }
     }
 

@@ -60,6 +60,30 @@ struct SQLitePlannerRepositoryTests {
         }
     }
 
+    @Test func pausedFocusKeepsItsRemainingTimeAfterRenamingAndReopening() throws {
+        try withDirectory { directory in
+            let repository = try SQLitePlannerRepository(directory: directory)
+            let end = Date(timeIntervalSinceReferenceDate: 850_000_000)
+            var plan = Plan(title: "Trip")
+            let initial = PlannerData(
+                plans: [plan],
+                focus: FocusSession(planID: plan.id, planTitle: plan.title, minutes: 25, endsAt: end)
+            )
+            try repository.save(initial, replacing: PlannerData())
+
+            var updated = initial
+            updated.focus?.pausedSeconds = 90
+            plan.title = "Weekend trip"
+            updated.save(plan: plan)
+            try repository.save(updated, replacing: initial)
+
+            let session = try #require(SQLitePlannerRepository(directory: directory).load().focus)
+            #expect(session.planTitle == plan.title)
+            #expect(session.isRunning(at: end.addingTimeInterval(-600)) == false)
+            #expect(session.secondsRemaining(at: end.addingTimeInterval(600)) == 90)
+        }
+    }
+
     @Test func failedSaveRollsBackEarlierChangesInTheSameTransaction() throws {
         try withDirectory { directory in
             let repository = try SQLitePlannerRepository(directory: directory)

@@ -13,7 +13,7 @@ final class FocusLiveActivity {
             await previousUpdate?.value
             await Self.updateActivities(for: session, appearance: appearance, start: start)
         }
-        guard let session else { return }
+        guard let session, session.pausedSeconds == nil else { return }
         let remaining = session.endsAt.timeIntervalSinceNow
         guard remaining > 0 else { return }
         expirationTask = Task { [weak self] in
@@ -26,7 +26,7 @@ final class FocusLiveActivity {
 
     private nonisolated static func updateActivities(for session: FocusSession?, appearance: AppearancePreference,
                                                     start: Bool) async {
-        let running = session.flatMap { $0.endsAt > .now ? $0 : nil }
+        let running = session.flatMap { $0.isRunning(at: .now) ? $0 : nil }
         let activities = Activity<FocusActivityAttributes>.activities
         let current = activities.first {
             $0.attributes.planID == running?.planID && $0.content.state.endsAt == running?.endsAt

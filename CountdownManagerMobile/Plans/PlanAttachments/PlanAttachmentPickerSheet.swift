@@ -37,13 +37,14 @@ struct PlanAttachmentPickerSheet: View {
     @State private var showsLink = false
     @State private var addedLink = false
     let checklistTitle: String?
+    var tablet = false
     let onSelect: (PlanAttachmentSelection) -> Void
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 5) {
+            VStack(alignment: tablet ? .leading : .center, spacing: tablet ? 7 : 5) {
                 Text(checklistTitle == nil ? String(localized: "Add attachment") : String(localized: "Attach to checklist item"))
-                    .brandFont(17, weight: .semibold)
+                    .font(tablet ? .custom("PTSerif-Regular", size: 26, relativeTo: .title2) : .headline)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, checklistTitle == nil ? 3 : 0)
@@ -81,7 +82,7 @@ struct PlanAttachmentPickerSheet: View {
                     .buttonStyle(.plain)
                     .brandFont(15, weight: .medium, relativeTo: .subheadline)
                     .foregroundStyle(Palette.accentText)
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: tablet ? .trailing : .center)
                     .contentShape(.rect)
                     .padding(.top, 3)
             }
@@ -89,7 +90,7 @@ struct PlanAttachmentPickerSheet: View {
             .padding(.top, 24)
         }
         .foregroundStyle(Palette.text)
-        .presentationDetents([.height((checklistTitle == nil ? 256 : 280) * heightScale), .large])
+        .presentationDetents([.height((checklistTitle == nil ? (tablet ? 300 : 256) : (tablet ? 330 : 280)) * heightScale), .large])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(26)
         .presentationBackground(Palette.surface)

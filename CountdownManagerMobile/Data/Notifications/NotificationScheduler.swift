@@ -53,7 +53,7 @@ actor NotificationScheduler {
             let body = (0...1).contains(offset) ? "\(AppDate.relative(offset)), \(date)" : date
             dated.append(.init(date: plan.date, id: "plan.\(plan.id)", title: plan.title, body: body))
         }
-        if let focus = schedule.focus, focus.endsAt > now {
+        if let focus = schedule.focus, focus.isRunning(at: now) {
             dated.append(.init(date: focus.endsAt, id: "focus.\(focus.planID)", title: String(localized: "Time’s up"), body: focus.planTitle))
         }
 

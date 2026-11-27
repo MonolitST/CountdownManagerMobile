@@ -5,6 +5,7 @@ struct WeatherTile: View {
     let forecast: WeatherForecast?
     let failed: Bool
     var isDemo = false
+    var sidebar = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -21,16 +22,16 @@ struct WeatherTile: View {
                 .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(forecast.map { "\(place.name) · \(condition($0.current.condition))" } ?? place.name)
+                    Text(sidebar ? place.name : forecast.map { "\(place.name) · \(condition($0.current.condition))" } ?? place.name)
                         .brandFont(13, weight: .medium, relativeTo: .footnote)
-                    Text(summary)
+                    Text(sidebar ? forecast.map { condition($0.current.condition) } ?? summary : summary)
                         .brandFont(11, relativeTo: .caption2)
                         .foregroundStyle(Palette.secondary)
                 }
                 Spacer(minLength: 0)
                 if let forecast {
                     Text(degrees(forecast.current.temperature2m))
-                        .brandFont(26, weight: .light, relativeTo: .title2)
+                        .brandFont(sidebar ? 21 : 26, weight: .light, relativeTo: .title2)
                         .accessibilityLabel("\(Int(forecast.current.temperature2m.rounded())) degrees Celsius")
                 }
             }
@@ -48,7 +49,7 @@ struct WeatherTile: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 9)
-        .card(Palette.inset, cornerRadius: 12)
+        .card(sidebar ? Palette.background : Palette.inset, cornerRadius: 12)
     }
 
     private var attributionLinks: some View {

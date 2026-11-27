@@ -12,9 +12,12 @@ struct PlanEditor: View {
     @State private var confirmsDeletion = false
     @FocusState private var focusedItem: UUID?
     private let original: Plan?
+    private let onFinish: ((UUID?) -> Void)?
 
-    init(plan: Plan? = nil, addingAttachmentTo target: PlanAttachmentTarget? = nil) {
+    init(plan: Plan? = nil, addingAttachmentTo target: PlanAttachmentTarget? = nil,
+         onFinish: ((UUID?) -> Void)? = nil) {
         original = plan
+        self.onFinish = onFinish
         _draft = State(initialValue: plan ?? Plan())
         _attachmentEditor = State(initialValue: PlanAttachmentEditorViewModel(attachments: plan?.attachments ?? []))
         _originalAttachmentIDs = State(initialValue: Set(plan?.attachments.map(\.id) ?? []))
@@ -22,33 +25,30 @@ struct PlanEditor: View {
     }
 
     var body: some View {
-        ScreenScroll(topPadding: 3) {
+        ScreenScroll(topPadding: tablet ? 18 : 3, contentWidth: tablet ? 680 : 530,
+                     horizontalPadding: tablet ? 30 : 23) {
             VStack(alignment: .leading, spacing: sectionSpacing) {
-                EditorCloseButton()
-                ScreenHeader(title: original == nil ? String(localized: "New plan") : String(localized: "Edit plan"))
-                FieldLabel(title: String(localized: "Title")) {
-                    TextField(String(localized: "Title"), text: $draft.title,
-                              prompt: Text("E.g. Trip to Suzdal").foregroundStyle(Palette.secondary))
-                        .textInputAutocapitalization(.sentences)
-                        .brandFont(16)
-                        .padding(12)
-                        .frame(minHeight: 50)
-                        .fieldSurface()
-                        .accessibilityIdentifier("plan.title")
+                if tablet {
+                    ScreenNavigation(backLabel: String(localized: "Back"), goBack: { finish() })
+                } else {
+                    EditorCloseButton()
                 }
-                FieldLabel(title: String(localized: "Date")) {
-                    Button {
-                        showsDate = true
-                    } label: {
-                        Text(AppDate.full(draft.day))
-                            .brandFont(16)
-                            .frame(maxWidth: .infinity, minHeight: 50, alignment: .leading)
-                            .padding(.horizontal, 12)
-                            .fieldSurface()
+                ScreenHeader(title: original == nil ? String(localized: "New plan") : String(localized: "Edit plan"),
+                             titleSize: tablet ? 36 : 31)
+                if tablet {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .top, spacing: 14) {
+                            titleField.frame(minWidth: 205, maxWidth: .infinity)
+                            dateField.frame(width: 220)
+                        }
+                        VStack(alignment: .leading, spacing: 10) {
+                            titleField
+                            dateField
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(String(localized: "Date"))
-                    .accessibilityValue(AppDate.full(draft.day))
+                } else {
+                    titleField
+                    dateField
                 }
                 VStack(alignment: .leading, spacing: sectionSpacing - 8) {
                     FieldLabel(title: String(localized: "Note · optional")) {
@@ -66,7 +66,7 @@ struct PlanEditor: View {
                         }
                     }
                     PlanEditorOptions(draft: $draft, focusedItem: $focusedItem, sectionSpacing: sectionSpacing,
-                                      attachmentEditor: attachmentEditor, fileURL: attachmentURL) {
+                                      attachmentEditor: attachmentEditor, fileURL: attachmentURL, tablet: tablet) {
                         focusedItem = nil
                         attachmentChooser = $0
                     }
@@ -83,7 +83,7 @@ struct PlanEditor: View {
             FormFooter(title: String(localized: "Save plan"),
                        disabled: draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                             || draft.note.count > noteLimit || attachmentEditor.isImporting || hasUntitledAttachmentItem,
-                       action: save)
+                       tablet: tablet, action: save)
         }
         .foregroundStyle(Palette.text)
         .tint(Palette.accentText)
@@ -106,7 +106,7 @@ struct PlanEditor: View {
                 let trimmed = item.title.trimmingCharacters(in: .whitespacesAndNewlines)
                 return trimmed.isEmpty ? String(localized: "Checklist item") : trimmed
             }
-            PlanAttachmentPickerSheet(checklistTitle: title) { result in
+            PlanAttachmentPickerSheet(checklistTitle: title, tablet: tablet) { result in
                 switch result {
                 case let .photos(photos): attachmentEditor.addPhotos(photos, to: target)
                 case let .files(files): attachmentEditor.addFiles(files, to: target)
@@ -122,6 +122,42 @@ struct PlanEditor: View {
         } message: {
             Text(attachmentEditor.errorMessage ?? "")
         }
+    }
+
+    private var tablet: Bool { onFinish != nil }
+
+    private var titleField: some View {
+        FieldLabel(title: String(localized: "Title")) {
+            TextField(String(localized: "Title"), text: $draft.title,
+                      prompt: Text("E.g. Trip to Suzdal").foregroundStyle(Palette.secondary))
+                .textInputAutocapitalization(.sentences)
+                .brandFont(16)
+                .padding(12)
+                .frame(minHeight: 50)
+                .fieldSurface()
+                .accessibilityIdentifier("plan.title")
+        }
+    }
+
+    private var dateField: some View {
+        FieldLabel(title: String(localized: "Date")) {
+            Button {
+                showsDate = true
+            } label: {
+                Text(AppDate.full(draft.day))
+                    .brandFont(16)
+                    .frame(maxWidth: .infinity, minHeight: 50, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .fieldSurface()
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "Date"))
+            .accessibilityValue(AppDate.full(draft.day))
+        }
+    }
+
+    private func finish(_ savedID: UUID? = nil) {
+        if let onFinish { onFinish(savedID) } else { dismiss() }
     }
 
     private var noteLimit: Int { max(Plan.noteLimit, original?.note.count ?? 0) }
@@ -154,7 +190,7 @@ struct PlanEditor: View {
         draft.attachments = attachmentEditor.attachments + newlyShared
         draft.day = calendar.startOfDay(for: draft.day)
         if store.save(draft, importing: attachmentEditor.imports) {
-            dismiss()
+            finish(draft.id)
         } else {
             attachmentEditor.errorMessage = store.errorMessage
             store.errorMessage = nil

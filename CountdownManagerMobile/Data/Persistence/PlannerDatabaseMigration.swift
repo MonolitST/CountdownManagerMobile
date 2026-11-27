@@ -37,6 +37,11 @@ enum PlannerDatabaseMigration {
                 );
                 """)
         }
+        migrator.registerMigration("addPausedFocusDuration") { db in
+            try db.alter(table: "focus_session") { table in
+                table.add(column: "pausedSeconds", .integer)
+            }
+        }
         return migrator
     }
 

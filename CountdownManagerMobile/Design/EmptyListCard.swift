@@ -6,6 +6,7 @@ struct EmptyListCard: View {
     let title: LocalizedStringResource
     let message: LocalizedStringResource
     let buttonTitle: LocalizedStringResource
+    var tablet = false
     let onAdd: () -> Void
 
     var body: some View {
@@ -21,19 +22,23 @@ struct EmptyListCard: View {
 
             VStack(spacing: 6) {
                 Text(title)
-                    .displayFont(26, relativeTo: .title2)
+                    .displayFont(tablet ? 36 : 26, relativeTo: .title2)
                     .frame(minHeight: 32)
                     .accessibilityAddTraits(.isHeader)
                 Text(message)
                     .brandFont(14, relativeTo: .subheadline)
                     .foregroundStyle(Palette.secondary)
                     .lineSpacing(3)
-                    .frame(maxWidth: 236, minHeight: 40)
+                    .frame(maxWidth: tablet ? 420 : 236, minHeight: tablet ? nil : 40)
             }
             .multilineTextAlignment(.center)
 
             Button(action: onAdd) {
-                Text(buttonTitle)
+                if tablet {
+                    Label { Text(buttonTitle) } icon: { DesignIcon(.addSmall) }
+                } else {
+                    Text(buttonTitle)
+                }
             }
             .buttonStyle(BrandButtonStyle(compact: true))
             .frame(maxWidth: 168)
@@ -41,6 +46,6 @@ struct EmptyListCard: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 28)
         .frame(maxWidth: .infinity)
-        .card()
+        .card(tablet ? .clear : Palette.surface)
     }
 }

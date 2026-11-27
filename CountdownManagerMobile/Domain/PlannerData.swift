@@ -22,7 +22,7 @@ struct PlannerData: Codable, Equatable, Sendable {
         }
         if let focus, focus.planID == plan.id, focus.planTitle != plan.title {
             self.focus = FocusSession(planID: focus.planID, planTitle: plan.title,
-                                      minutes: focus.minutes, endsAt: focus.endsAt)
+                                      minutes: focus.minutes, endsAt: focus.endsAt, pausedSeconds: focus.pausedSeconds)
         }
     }
 

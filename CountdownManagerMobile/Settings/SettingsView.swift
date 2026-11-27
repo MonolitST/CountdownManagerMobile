@@ -4,8 +4,12 @@ struct SettingsView: View {
     @Environment(PlannerViewModel.self) private var store
     @Environment(WeatherStore.self) private var weather
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsCityPicker = false
     @State private var picker: PreferencePicker?
+    var tablet = false
+    var wide = false
+    var splitContent = false
 
     private enum PreferencePicker: String, Identifiable {
         case sound, focus, systemNotifications
@@ -14,64 +18,36 @@ struct SettingsView: View {
 
     var body: some View {
         let settings = store.data.settings
-        ScreenScroll {
+        ScreenScroll(topPadding: tablet ? 26 : 10, contentWidth: tablet ? (wide ? 920 : 722) : 530,
+                     horizontalPadding: tablet ? 30 : 23) {
             VStack(alignment: .leading, spacing: 16) {
-                ScreenHeader(title: String(localized: "Settings"))
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(String(localized: "Appearance")).brandFont(13, relativeTo: .footnote)
-                        .foregroundStyle(Palette.secondary)
-                        .accessibilityAddTraits(.isHeader)
-                        .padding(.bottom, 7)
-                    ForEach(AppearancePreference.allCases) { preference in
-                        ThemeRow(preference: preference, selected: settings.appearance == preference) {
-                            store.set(\.appearance, to: preference)
+                ScreenHeader(title: String(localized: "Settings"), titleSize: tablet ? 36 : 31)
+                if tablet {
+                    if splitContent && !dynamicTypeSize.isAccessibilitySize {
+                        HStack(alignment: .top, spacing: 22) {
+                            appearanceAndWeather.frame(minWidth: 240, maxWidth: .infinity)
+                            notificationsAndFocus.frame(minWidth: 240, maxWidth: .infinity)
                         }
-                        rule
-                    }
-                }
-                VStack(spacing: 0) {
-                    Toggle(String(localized: "Show weather"), isOn: setting(\.showsWeather))
-                        .brandFont(16)
-                        .toggleStyle(BrandToggleStyle())
-                    Button {
-                        showsCityPicker = true
-                    } label: {
-                        SettingsValueRow(title: String(localized: "City"), value: weather.place(for: settings)?.name ?? String(localized: "Choose a city"))
-                    }
-                    .buttonStyle(.plain)
-                    rule
-                }
-                VStack(spacing: 0) {
-                    Toggle(String(localized: "Notifications"), isOn: notificationSetting)
-                        .brandFont(16)
-                        .toggleStyle(BrandToggleStyle())
-                    Button {
-                        picker = .sound
-                    } label: {
-                        SettingsValueRow(title: String(localized: "Sound"), value: settings.notificationSound.title)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(String(localized: "Sound"))
-                    .accessibilityValue(settings.notificationSound.title)
-                    if settings.notificationsEnabled, store.notifications.permission == false {
-                        Button(String(localized: "Allow notifications in iOS Settings")) {
-                            picker = .systemNotifications
+                    } else {
+                        VStack(spacing: 16) {
+                            appearanceAndWeather
+                            notificationsAndFocus
                         }
-                        .brandFont(13, relativeTo: .footnote)
-                        .foregroundStyle(Palette.accentText)
-                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     }
-                    rule
+                } else {
+                    VStack(alignment: .leading, spacing: 0) {
+                        sectionTitle("Appearance").padding(.bottom, 7)
+                        ForEach(AppearancePreference.allCases) { preference in
+                            ThemeRow(preference: preference, selected: settings.appearance == preference) {
+                                store.set(\.appearance, to: preference)
+                            }
+                            rule
+                        }
+                    }
+                    weatherControls(settings)
+                    notificationControls(settings)
+                    focusControl(settings)
                 }
-                Button {
-                    picker = .focus
-                } label: {
-                    SettingsValueRow(title: String(localized: "Focus duration"), value: String(localized: "\(settings.focusMinutes) min"), prominent: true)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Focus duration"))
-                .accessibilityValue(String(localized: "\(settings.focusMinutes) min"))
             }
         }
         .fullScreenCover(isPresented: $showsCityPicker) {
@@ -103,6 +79,131 @@ struct SettingsView: View {
                                          actionTitle: String(localized: "Allow Notifications"), action: openNotificationSettings)
             }
         }
+    }
+
+    private var appearanceAndWeather: some View {
+        let settings = store.data.settings
+        return VStack(alignment: .leading, spacing: 14) {
+            sectionTitle("Appearance")
+            settingsCard {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Theme").brandFont(14, relativeTo: .subheadline)
+                    if dynamicTypeSize.isAccessibilitySize {
+                        VStack(spacing: 6) { themeButtons }
+                    } else {
+                        HStack(spacing: 6) { themeButtons }
+                    }
+                }
+                .padding(12)
+                rule
+                Button {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                } label: {
+                    SettingsValueRow(title: String(localized: "Language"),
+                                     value: AppDate.languageCode == "ru" ? "Русский" : "English")
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint(String(localized: "Opens system settings"))
+            }
+            sectionTitle("Weather")
+            settingsCard { weatherControls(settings) }
+        }
+    }
+
+    private var notificationsAndFocus: some View {
+        let settings = store.data.settings
+        return VStack(alignment: .leading, spacing: 14) {
+            sectionTitle("Notifications")
+            settingsCard { notificationControls(settings) }
+            sectionTitle("Time to get ready")
+            settingsCard { focusControl(settings) }
+        }
+    }
+
+    private var themeButtons: some View {
+        ForEach(AppearancePreference.allCases) { preference in
+            let selected = store.data.settings.appearance == preference
+            Button {
+                store.set(\.appearance, to: preference)
+            } label: {
+                Text(preference.title)
+                    .brandFont(14, weight: selected ? .semibold : .regular, relativeTo: .subheadline)
+                    .foregroundStyle(selected ? Palette.accentText : Palette.text)
+                    .padding(.horizontal, 7)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .card(selected ? Palette.accent.opacity(0.12) : Palette.inset, cornerRadius: 10)
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(selected ? .isSelected : [])
+        }
+    }
+
+    private func weatherControls(_ settings: Settings) -> some View {
+        VStack(spacing: 0) {
+            Toggle(String(localized: "Show weather"), isOn: setting(\.showsWeather))
+                .brandFont(16)
+                .toggleStyle(BrandToggleStyle())
+            if tablet { rule }
+            Button {
+                showsCityPicker = true
+            } label: {
+                SettingsValueRow(title: String(localized: "City"), value: weather.place(for: settings)?.name ?? String(localized: "Choose a city"))
+            }
+            .buttonStyle(.plain)
+            if !tablet { rule }
+        }
+    }
+
+    private func notificationControls(_ settings: Settings) -> some View {
+        VStack(spacing: 0) {
+            Toggle(tablet ? String(localized: "Notifications enabled") : String(localized: "Notifications"), isOn: notificationSetting)
+                .brandFont(16)
+                .toggleStyle(BrandToggleStyle())
+            if tablet { rule }
+            Button {
+                picker = .sound
+            } label: {
+                SettingsValueRow(title: String(localized: "Sound"), value: settings.notificationSound.title)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "Sound"))
+            .accessibilityValue(settings.notificationSound.title)
+            if settings.notificationsEnabled, store.notifications.permission == false {
+                Button(String(localized: "Allow notifications in iOS Settings")) { picker = .systemNotifications }
+                    .brandFont(13, weight: .semibold, relativeTo: .footnote)
+                    .foregroundStyle(Palette.accentText)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            }
+            if !tablet { rule }
+        }
+    }
+
+    private func focusControl(_ settings: Settings) -> some View {
+        Button {
+            picker = .focus
+        } label: {
+            SettingsValueRow(title: String(localized: "Focus duration"), value: String(localized: "\(settings.focusMinutes) min"), prominent: !tablet)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(String(localized: "Focus duration"))
+        .accessibilityValue(String(localized: "\(settings.focusMinutes) min"))
+    }
+
+    private func sectionTitle(_ title: LocalizedStringResource) -> some View {
+        Text(title).brandFont(13, weight: .semibold, relativeTo: .footnote)
+            .foregroundStyle(Palette.secondary)
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    private func settingsCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        VStack(spacing: 0, content: content)
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity)
+            .card(Palette.surface)
+            .overlay {
+                RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.outline, lineWidth: 0.7)
+                    .allowsHitTesting(false)
+            }
     }
 
     private var rule: some View {

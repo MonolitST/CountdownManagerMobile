@@ -5,12 +5,12 @@ struct CalendarLeaf: View {
     var size: Size = .normal
 
     enum Size {
-        case compact, normal, large
+        case compact, normal, large, tabletRow
 
-        var width: CGFloat { self == .compact ? 42 : self == .normal ? 58 : 64 }
-        var height: CGFloat { self == .compact ? 56 : 68 }
-        var monthHeight: CGFloat { self == .compact ? 19 : 22 }
-        var numberSize: CGFloat { self == .compact ? 25 : 34 }
+        var width: CGFloat { self == .compact || self == .tabletRow ? 42 : self == .normal ? 58 : 64 }
+        var height: CGFloat { self == .tabletRow ? 48 : self == .compact ? 56 : 68 }
+        var monthHeight: CGFloat { self == .tabletRow ? 16 : self == .compact ? 19 : 22 }
+        var numberSize: CGFloat { self == .compact || self == .tabletRow ? 25 : 34 }
     }
 
     var body: some View {

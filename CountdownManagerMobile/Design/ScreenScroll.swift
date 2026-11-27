@@ -3,6 +3,8 @@ import SwiftUI
 struct ScreenScroll<Content: View>: View {
     var topPadding: CGFloat = 10
     var fillsViewport = false
+    var contentWidth: CGFloat = 530
+    var horizontalPadding: CGFloat = 23
     @ViewBuilder var content: Content
 
     var body: some View {
@@ -18,8 +20,8 @@ struct ScreenScroll<Content: View>: View {
     private func scroll(minimumContentHeight: CGFloat?) -> some View {
         ScrollView {
             content
-                .frame(maxWidth: 530, minHeight: minimumContentHeight, alignment: .topLeading)
-                .padding(.horizontal, 23)
+                .frame(maxWidth: contentWidth, minHeight: minimumContentHeight, alignment: .topLeading)
+                .padding(.horizontal, horizontalPadding)
                 .padding(.top, topPadding)
                 .padding(.bottom, 18)
                 .frame(maxWidth: .infinity)

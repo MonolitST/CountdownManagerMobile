@@ -2,8 +2,6 @@ import SwiftUI
 
 struct PlansView: View {
     @Environment(PlannerViewModel.self) private var store
-    @Environment(WeatherStore.self) private var weather
-    @State private var showsCityPicker = false
     @State private var planToDelete: Plan?
     @Environment(\.calendar) private var calendar
     let today: Date
@@ -31,7 +29,6 @@ struct PlansView: View {
                 planList(favorite: model.favorite, otherPlans: model.otherPlans)
             }
         }
-        .fullScreenCover(isPresented: $showsCityPicker) { CityPicker() }
         .sheet(item: $planToDelete) { plan in
             ConceptConfirmationSheet(title: String(localized: "Delete this plan?"),
                                      actionTitle: String(localized: "Delete"), destructive: true) {
@@ -96,17 +93,7 @@ struct PlansView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 14) {
             ScreenHeader(title: String(localized: "My plans"), date: today, addLabel: String(localized: "New plan"), onAdd: onAdd)
-            if store.data.settings.showsWeather {
-                if let place = weather.place(for: store.data.settings) {
-                    WeatherTile(place: place, forecast: weather.forecast(for: place, demo: store.usesDemoContent),
-                                failed: weather.forecastFailed(for: place), isDemo: store.usesDemoContent)
-                } else {
-                    WeatherSetupTile(isLocating: weather.location.isLocating,
-                                     unavailable: weather.location.accessDenied || weather.location.failed) {
-                        showsCityPicker = true
-                    }
-                }
-            }
+            PlannerWeatherTile()
         }
     }
 }

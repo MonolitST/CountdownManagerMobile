@@ -60,6 +60,7 @@ struct FocusSessionRecord: Codable, FetchableRecord, PersistableRecord {
     let planTitle: String
     let minutes: Int
     let endsAt: Double
+    let pausedSeconds: Int?
 
     init(_ session: FocusSession) {
         id = 1
@@ -67,10 +68,11 @@ struct FocusSessionRecord: Codable, FetchableRecord, PersistableRecord {
         planTitle = session.planTitle
         minutes = session.minutes
         endsAt = session.endsAt.timeIntervalSinceReferenceDate
+        pausedSeconds = session.pausedSeconds
     }
 
     var session: FocusSession {
         FocusSession(planID: planID, planTitle: planTitle, minutes: minutes,
-                     endsAt: Date(timeIntervalSinceReferenceDate: endsAt))
+                     endsAt: Date(timeIntervalSinceReferenceDate: endsAt), pausedSeconds: pausedSeconds)
     }
 }

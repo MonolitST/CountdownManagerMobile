@@ -7,12 +7,20 @@ struct FeaturedReminderCard: View {
     let occurrence: ReminderOccurrence
     let today: Date
     let onEdit: () -> Void
+    var tablet = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 13) {
-            Text(String(localized: "Next reminder"))
-                .brandFont(12, relativeTo: .caption)
-                .foregroundStyle(Palette.secondary)
+            if tablet {
+                DesignIcon(.tabBell)
+                    .foregroundStyle(Palette.accentText)
+                    .frame(width: 40, height: 40)
+                    .card(Palette.inset, cornerRadius: 10)
+            } else {
+                Text(String(localized: "Next reminder"))
+                    .brandFont(12, relativeTo: .caption)
+                    .foregroundStyle(Palette.secondary)
+            }
             Button(action: onEdit) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
@@ -27,7 +35,7 @@ struct FeaturedReminderCard: View {
                             .foregroundStyle(Palette.secondary)
                     }
                     Spacer(minLength: 8)
-                    CalendarLeaf(date: occurrence.date)
+                    if !tablet { CalendarLeaf(date: occurrence.date) }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(.rect)
@@ -46,6 +54,12 @@ struct FeaturedReminderCard: View {
         }
         .padding(16)
         .card()
+        .overlay {
+            if tablet {
+                RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.outline, lineWidth: 0.7)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 
     private var dateAndTime: String {
@@ -62,10 +76,12 @@ struct FeaturedReminderCard: View {
                 Label { Text(String(localized: "Done")) } icon: { DesignIcon(.done) }
             }
             .buttonStyle(BrandButtonStyle())
+            .frame(maxWidth: tablet ? 110 : .infinity)
             Button(String(localized: "Snooze")) {
                 store.finish(reminder, occurrence: occurrence.date, snoozing: true)
             }
             .buttonStyle(BrandButtonStyle(outlined: true))
+            .frame(maxWidth: tablet ? 110 : .infinity)
             .accessibilityHint(String(localized: "For 10 minutes"))
         }
     }

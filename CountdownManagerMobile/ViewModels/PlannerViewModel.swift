@@ -136,6 +136,23 @@ final class PlannerViewModel {
         _ = commit(updated)
     }
 
+    func pauseFocus(for planID: UUID) {
+        let now = Date.now
+        guard var session = data.focus, session.planID == planID, session.isRunning(at: now) else { return }
+        session.pausedSeconds = session.secondsRemaining(at: now)
+        var updated = data
+        updated.focus = session
+        _ = commit(updated)
+    }
+
+    func resumeFocus(for planID: UUID) {
+        guard let session = data.focus, session.planID == planID, let seconds = session.pausedSeconds else { return }
+        var updated = data
+        updated.focus = FocusSession(planID: planID, planTitle: session.planTitle, minutes: session.minutes,
+                                     endsAt: .now.addingTimeInterval(Double(seconds)))
+        _ = commit(updated)
+    }
+
     func restoreFocusLiveActivity() {
         guard demo || repository != nil else { return }
         liveActivity.sync(data.focus, appearance: data.settings.appearance)
@@ -188,7 +205,8 @@ final class PlannerViewModel {
             data = updated
             if shouldUpdateActivity {
                 liveActivity.sync(updated.focus, appearance: updated.settings.appearance,
-                                  start: previousFocus?.endsAt != updated.focus?.endsAt)
+                                  start: previousFocus?.endsAt != updated.focus?.endsAt
+                                    || previousFocus?.pausedSeconds != updated.focus?.pausedSeconds)
             }
             if shouldUpdateNotifications { refreshNotifications(requestPermission: requestPermission) }
             return true

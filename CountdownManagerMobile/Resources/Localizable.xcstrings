@@ -143,6 +143,16 @@
         }
       }
     },
+    "Add an event and a checklist to get ready.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте событие и список дел для подготовки."
+          }
+        }
+      }
+    },
     "Add attachment": {
       "localizations": {
         "ru": {
@@ -179,6 +189,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Добавить в избранное"
+          }
+        }
+      }
+    },
+    "All plans": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все планы"
           }
         }
       }
@@ -355,6 +375,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Выберите время в будущем."
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
           }
         }
       }
@@ -719,6 +749,16 @@
         }
       }
     },
+    "Edit": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменить"
+          }
+        }
+      }
+    },
     "Edit plan": {
       "localizations": {
         "ru": {
@@ -819,6 +859,16 @@
         }
       }
     },
+    "Favorite": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Избранное"
+          }
+        }
+      }
+    },
     "Favorite plan": {
       "localizations": {
         "ru": {
@@ -845,6 +895,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Определяем город…"
+          }
+        }
+      }
+    },
+    "Finish": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершить"
           }
         }
       }
@@ -1037,6 +1097,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Таймер\nвсегда на виду"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Язык"
           }
         }
       }
@@ -1317,6 +1387,16 @@
         }
       }
     },
+    "Notifications enabled": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уведомления включены"
+          }
+        }
+      }
+    },
     "OCTOBER": {
       "localizations": {
         "ru": {
@@ -1397,6 +1477,16 @@
         }
       }
     },
+    "Opens system settings": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открывает настройки системы"
+          }
+        }
+      }
+    },
     "Other plans": {
       "localizations": {
         "ru": {
@@ -1443,6 +1533,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Страница %lld из %lld"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пауза"
           }
         }
       }
@@ -1633,6 +1733,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Начать заново"
+          }
+        }
+      }
+    },
+    "Resume": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить"
           }
         }
       }
@@ -1953,6 +2063,16 @@
         }
       }
     },
+    "Theme": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тема"
+          }
+        }
+      }
+    },
     "Thu": {
       "localizations": {
         "ru": {
@@ -2119,6 +2239,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Использовать текущее местоположение"
+          }
+        }
+      }
+    },
+    "Weather": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Погода"
           }
         }
       }
